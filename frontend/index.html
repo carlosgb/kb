@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WAKO School Manager - Dashboard</title>
+    <title>Black W KB - Dashboard</title>
     <link rel="stylesheet" href="css/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -14,7 +14,7 @@
         <aside class="sidebar">
             <div class="logo">
                 <i class="fas fa-fist-raised"></i>
-                <span>WAKO Manager</span>
+                <span>Black W KB</span>
             </div>
             <nav class="nav-menu">
                 <a href="index.html" class="nav-item active">
@@ -133,19 +133,7 @@
                     </div>
                 </div>
 
-                <div class="card full-width">
-                    <div class="card-header">
-                        <h3><i class="fas fa-chart-bar"></i> Tendencia de Ingresos</h3>
-                        <select id="mesSelector" onchange="cargarTendencias()">
-                            <option value="6">Últimos 6 meses</option>
-                            <option value="3">Últimos 3 meses</option>
-                            <option value="12">Últimos 12 meses</option>
-                        </select>
-                    </div>
-                    <div class="card-body">
-                        <canvas id="ingresosChart" height="300"></canvas>
-                    </div>
-                </div>
+                
 
                 <div class="card">
                     <div class="card-header">
@@ -156,14 +144,7 @@
                     </div>
                 </div>
 
-                <div class="card">
-                    <div class="card-header">
-                        <h3><i class="fas fa-dollar-sign"></i> Resumen Financiero</h3>
-                    </div>
-                    <div class="card-body" id="resumenFinanciero">
-                        <div class="loading">Cargando...</div>
-                    </div>
-                </div>
+                
             </div>
         </main>
     </div>

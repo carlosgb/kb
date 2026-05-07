@@ -150,10 +150,34 @@ function setupLogoutButton() {
 }
 
 // Inicializar autenticación
+//document.addEventListener('DOMContentLoaded', () => {
+//    if (checkAuth()) {
+//        updateUserInfo();
+//        applyRolePermissions();
+//        setupLogoutButton();
+//    }
+//}
+
 document.addEventListener('DOMContentLoaded', () => {
-    if (checkAuth()) {
-        updateUserInfo();
-        applyRolePermissions();
-        setupLogoutButton();
+    const token = getAuthToken();
+    if (!token && !window.location.pathname.includes('login.html')) {
+        window.location.href = 'login.html';
+    }
+    
+    const logoutBtn = document.getElementById('logoutBtn');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', logout);
+    }
+    
+    const userStr = localStorage.getItem('usuario');
+    if (userStr) {
+        try {
+            const user = JSON.parse(userStr);
+            const userNameSpan = document.querySelector('.user-name');
+            if (userNameSpan) userNameSpan.textContent = `${user.nombre} ${user.apellidos}`;
+            const userRoleSpan = document.querySelector('.user-role');
+            if (userRoleSpan) userRoleSpan.textContent = user.rol === 'admin' ? 'Administrador' : user.rol;
+        } catch(e) {}
     }
 });
+
