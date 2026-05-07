@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Horarios y Clases - WAKO Manager</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Estilos adicionales para horarios */
+        .horarios-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .btn-primary {
+            background: #e94560;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+
+        .btn-primary:hover {
+            background: #c73e56;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: #f0f2f5;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: #1a1a2e;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e4e8;
+        }
+
+        .btn-success {
+            background: #10b981;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .btn-success:hover {
+            background: #059669;
+        }
+
+        .btn-danger {
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .btn-danger:hover {
+            background: #dc2626;
+        }
+
+        .dias-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+            background: white;
+            padding: 10px;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .dia-tab {
+            padding: 10px 20px;
+            background: #f0f2f5;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .dia-tab:hover {
+            background: #e0e4e8;
+        }
+
+        .dia-tab.active {
+            background: #e94560;
+            color: white;
+        }
+
+        .grid-horarios {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+            gap: 20px;
+        }
+
+        .horario-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            transition: all 0.3s;
+        }
+
+        .horario-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+
+        .horario-header {
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .horario-titulo h3 {
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+
+        .horario-titulo p {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
+        .badge {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .badge.activo {
+            background: #10b981;
+            color: white;
+        }
+
+        .badge.inactivo {
+            background: #6b7280;
+            color: white;
+        }
+
+        .badge.lleno {
+            background: #ef4444;
+            color: white;
+        }
+
+        .badge.disponible {
+            background: #10b981;
+            color: white;
+        }
+
+        .horario-body {
+            padding: 20px;
+        }
+
+        .horario-info {
+            margin-bottom: 15px;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .info-row span:first-child {
+            color: #666;
+        }
+
+        .info-row span:last-child {
+            font-weight: 500;
+        }
+
+        .progress-bar {
+            background: #eef2f6;
+            border-radius: 10px;
+            height: 8px;
+            margin-top: 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            background: #e94560;
+            height: 100%;
+            border-radius: 10px;
+            transition: width 0.3s;
+        }
+
+        .horario-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #eef2f6;
+        }
+
+        .horario-actions button {
+            flex: 1;
+            padding: 8px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s;
+        }
+
+        .btn-asistencia {
+            background: #e94560;
+            color: white;
+        }
+
+        .btn-asistencia:hover {
+            background: #c73e56;
+        }
+
+        .btn-inscribir {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .btn-inscribir:hover {
+            background: #2563eb;
+        }
+
+        .btn-editar {
+            background: #f0f2f5;
+            color: #1a1a2e;
+        }
+
+        .btn-editar:hover {
+            background: #e0e4e8;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 550px;
+            max-height: 85vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            padding: 20px 25px;
+            border-bottom: 1px solid #eef2f6;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            background: white;
+        }
+
+        .modal-header h3 {
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .modal-header h3 i {
+            color: #e94560;
+        }
+
+        .modal-body {
+            padding: 25px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #1a1a2e;
+        }
+
+        .form-group input, 
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            font-size: 14px;
+            font-family: inherit;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #e94560;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #999;
+        }
+
+        .close-modal:hover {
+            color: #e94560;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #eef2f6;
+        }
+
+        .lista-alumnos {
+            max-height: 350px;
+            overflow-y: auto;
+        }
+
+        .alumno-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            border-bottom: 1px solid #eef2f6;
+            transition: background 0.3s;
+        }
+
+        .alumno-item:hover {
+            background: #f8f9fa;
+        }
+
+        .alumno-item input {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .alumno-item label {
+            flex: 1;
+            cursor: pointer;
+            margin: 0;
+            font-weight: normal;
+        }
+
+        .alumno-item .alumno-grado {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .alumno-avatar {
+            width: 35px;
+            height: 35px;
+            background: #e94560;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 14px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 60px;
+            color: #999;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px;
+            color: #999;
+        }
+
+        .empty-state i {
+            font-size: 48px;
+            margin-bottom: 15px;
+            color: #ddd;
+        }
+
+        @media (max-width: 768px) {
+            .grid-horarios {
+                grid-template-columns: 1fr;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="logo">
+                <i class="fas fa-fist-raised"></i>
+                <span>WAKO Manager</span>
+            </div>
+            <nav class="nav-menu">
+                <a href="index.html" class="nav-item">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="alumnos.html" class="nav-item">
+                    <i class="fas fa-users"></i>
+                    <span>Alumnos</span>
+                </a>
+                <a href="maestros.html" class="nav-item">
+                    <i class="fas fa-chalkboard-user"></i>
+                    <span>Maestros</span>
+                </a>
+                <a href="horarios.html" class="nav-item active">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>Horarios</span>
+                </a>
+                <a href="eventos.html" class="nav-item">
+                    <i class="fas fa-trophy"></i>
+                    <span>Eventos</span>
+                </a>
+                <a href="reportes.html" class="nav-item">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Reportes</span>
+                </a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header class="top-bar">
+                <div class="page-title">
+                    <h1>Horarios de Clases</h1>
+                    <p>Gestiona horarios, inscripciones y toma de asistencia</p>
+                </div>
+            </header>
+
+            <div class="horarios-header">
+                <div class="dias-tabs" id="diasTabs"></div>
+                <button class="btn-primary" onclick="abrirModalNuevoHorario()">
+                    <i class="fas fa-plus"></i> Nueva Clase
+                </button>
+            </div>
+
+            <div id="horariosGrid" class="grid-horarios">
+                <div class="loading">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <p>Cargando horarios...</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal Nueva Clase -->
+    <div id="modalNuevoHorario" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-calendar-plus"></i> Nueva Clase</h3>
+                <button class="close-modal" onclick="cerrarModalNuevoHorario()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="formNuevoHorario">
+                    <div class="form-group">
+                        <label>Nombre de la Clase *</label>
+                        <input type="text" id="new_nombre" required placeholder="Ej: K1 Avanzados">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Tipo de Clase *</label>
+                            <select id="new_tipo" required>
+                                <option value="Kick Light">Kick Light</option>
+                                <option value="Point Fighting">Point Fighting</option>
+                                <option value="K1">K1</option>
+                                <option value="Full Contact">Full Contact</option>
+                                <option value="Acondicionamiento">Acondicionamiento</option>
+                                <option value="Infantil">Infantil</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Nivel *</label>
+                            <select id="new_nivel" required>
+                                <option value="Principiantes">Principiantes</option>
+                                <option value="Intermedios">Intermedios</option>
+                                <option value="Avanzados">Avanzados</option>
+                                <option value="Mixto">Mixto</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Día de la Semana *</label>
+                            <select id="new_dia" required>
+                                <option value="0">Lunes</option>
+                                <option value="1">Martes</option>
+                                <option value="2">Miércoles</option>
+                                <option value="3">Jueves</option>
+                                <option value="4">Viernes</option>
+                                <option value="5">Sábado</option>
+                                <option value="6">Domingo</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Salón</label>
+                            <input type="text" id="new_salon" value="Principal">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Hora Inicio *</label>
+                            <input type="time" id="new_hora_inicio" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Hora Fin *</label>
+                            <input type="time" id="new_hora_fin" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Capacidad Máxima</label>
+                            <input type="number" id="new_capacidad" value="20" min="1" max="100">
+                        </div>
+                        <div class="form-group">
+                            <label>Profesor</label>
+                            <select id="new_maestro">
+                                <option value="">Seleccionar profesor</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="checkbox-group" style="margin: 15px 0;">
+                        <label style="display: flex; align-items: center; gap: 8px;">
+                            <input type="checkbox" id="new_activo" checked> Clase Activa
+                        </label>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn-secondary" onclick="cerrarModalNuevoHorario()">Cancelar</button>
+                        <button type="submit" class="btn-primary">Crear Clase</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Editar Clase -->
+    <div id="modalEditarHorario" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-edit"></i> Editar Clase</h3>
+                <button class="close-modal" onclick="cerrarModalEditarHorario()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="formEditarHorario">
+                    <input type="hidden" id="edit_id">
+                    <div class="form-group">
+                        <label>Nombre de la Clase *</label>
+                        <input type="text" id="edit_nombre" required>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Tipo de Clase *</label>
+                            <select id="edit_tipo" required>
+                                <option value="Kick Light">Kick Light</option>
+                                <option value="Point Fighting">Point Fighting</option>
+                                <option value="K1">K1</option>
+                                <option value="Full Contact">Full Contact</option>
+                                <option value="Acondicionamiento">Acondicionamiento</option>
+                                <option value="Infantil">Infantil</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Nivel *</label>
+                            <select id="edit_nivel" required>
+                                <option value="Principiantes">Principiantes</option>
+                                <option value="Intermedios">Intermedios</option>
+                                <option value="Avanzados">Avanzados</option>
+                                <option value="Mixto">Mixto</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Día de la Semana *</label>
+                            <select id="edit_dia" required>
+                                <option value="0">Lunes</option>
+                                <option value="1">Martes</option>
+                                <option value="2">Miércoles</option>
+                                <option value="3">Jueves</option>
+                                <option value="4">Viernes</option>
+                                <option value="5">Sábado</option>
+                                <option value="6">Domingo</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Salón</label>
+                            <input type="text" id="edit_salon">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Hora Inicio *</label>
+                            <input type="time" id="edit_hora_inicio" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Hora Fin *</label>
+                            <input type="time" id="edit_hora_fin" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Capacidad Máxima</label>
+                            <input type="number" id="edit_capacidad" min="1" max="100">
+                        </div>
+                        <div class="form-group">
+                            <label>Profesor</label>
+                            <select id="edit_maestro">
+                                <option value="">Seleccionar profesor</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="checkbox-group" style="margin: 15px 0;">
+                        <label style="display: flex; align-items: center; gap: 8px;">
+                            <input type="checkbox" id="edit_activo"> Clase Activa
+                        </label>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn-secondary" onclick="cerrarModalEditarHorario()">Cancelar</button>
+                        <button type="submit" class="btn-primary">Guardar Cambios</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Inscribir Alumno -->
+    <div id="modalInscribirAlumno" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-user-plus"></i> Inscribir Alumno</h3>
+                <button class="close-modal" onclick="cerrarModalInscribir()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Clase</label>
+                    <input type="text" id="inscribirClaseNombre" readonly style="background: #f5f5f5;">
+                </div>
+                <div class="form-group">
+                    <label>Buscar Alumno</label>
+                    <input type="text" id="buscarAlumno" placeholder="Escribe para buscar..." onkeyup="filtrarAlumnos()">
+                </div>
+                <div class="form-group">
+                    <label>Seleccionar Alumno</label>
+                    <select id="inscribirAlumnoId" required>
+                        <option value="">-- Seleccione un alumno --</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Notas (opcional)</label>
+                    <textarea id="inscribirNotas" rows="2" placeholder="Observaciones sobre esta inscripción..."></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn-secondary" onclick="cerrarModalInscribir()">Cancelar</button>
+                    <button type="button" class="btn-primary" onclick="confirmarInscribirAlumno()">Inscribir Alumno</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Tomar Asistencia -->
+    <div id="modalAsistencia" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-check-circle"></i> Tomar Asistencia</h3>
+                <button class="close-modal" onclick="cerrarModalAsistencia()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Clase</label>
+                    <input type="text" id="asistenciaClaseNombre" readonly style="background: #f5f5f5;">
+                </div>
+                <div class="form-group">
+                    <label>Fecha</label>
+                    <input type="date" id="asistenciaFecha" value="">
+                </div>
+                <div class="form-group">
+                    <label>Alumnos Inscritos</label>
+                    <div id="listaAlumnosAsistencia" class="lista-alumnos">
+                        <div class="loading">Cargando alumnos...</div>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn-secondary" onclick="cerrarModalAsistencia()">Cancelar</button>
+                    <button type="button" class="btn-primary" onclick="guardarAsistencia()">Guardar Asistencia</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Ver Inscritos -->
+    <div id="modalVerInscritos" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-users"></i> Alumnos Inscritos</h3>
+                <button class="close-modal" onclick="cerrarModalVerInscritos()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Clase</label>
+                    <input type="text" id="verInscritosClaseNombre" readonly style="background: #f5f5f5;">
+                </div>
+                <div class="form-group">
+                    <label>Lista de Alumnos</label>
+                    <div id="listaInscritos" class="lista-alumnos">
+                        <div class="loading">Cargando...</div>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn-secondary" onclick="cerrarModalVerInscritos()">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script src="js/horarios.js"></script>
+</body>
+</html>

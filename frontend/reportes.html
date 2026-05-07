@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reportes - WAKO Manager</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .reportes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 25px;
+        }
+        
+        .report-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        .card-header {
+            padding: 20px 25px;
+            background: white;
+            border-bottom: 1px solid #eef2f6;
+        }
+        
+        .card-header h3 {
+            font-size: 18px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .card-header h3 i {
+            color: #e94560;
+        }
+        
+        .card-body {
+            padding: 25px;
+        }
+        
+        .medallero-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 12px;
+            border-bottom: 1px solid #eef2f6;
+        }
+        
+        .medalla {
+            font-size: 28px;
+        }
+        
+        .medallero-info {
+            flex: 1;
+        }
+        
+        .medallero-info strong {
+            display: block;
+        }
+        
+        .medallero-stats {
+            display: flex;
+            gap: 15px;
+            color: #666;
+            font-size: 13px;
+        }
+        
+        .ranking-valor {
+            font-weight: 700;
+            color: #e94560;
+        }
+        
+        .select-periodo {
+            margin-left: auto;
+            padding: 5px 10px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+        }
+        
+        canvas {
+            max-height: 300px;
+        }
+        
+        @media (max-width: 768px) {
+            .reportes-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="logo">
+                <i class="fas fa-fist-raised"></i>
+                <span>WAKO Manager</span>
+            </div>
+            <nav class="nav-menu">
+                <a href="index.html" class="nav-item">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="alumnos.html" class="nav-item">
+                    <i class="fas fa-users"></i>
+                    <span>Alumnos</span>
+                </a>
+                <a href="maestros.html" class="nav-item">
+                    <i class="fas fa-chalkboard-user"></i>
+                    <span>Maestros</span>
+                </a>
+                <a href="horarios.html" class="nav-item">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>Horarios</span>
+                </a>
+                <a href="eventos.html" class="nav-item">
+                    <i class="fas fa-trophy"></i>
+                    <span>Eventos</span>
+                </a>
+                <a href="reportes.html" class="nav-item active">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Reportes</span>
+                </a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header class="top-bar">
+                <div class="page-title">
+                    <h1>Reportes y Estadísticas</h1>
+                    <p>Análisis detallados de tu escuela</p>
+                </div>
+            </header>
+
+            <div class="reportes-grid">
+                <!-- Medallero -->
+                <div class="report-card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-medal"></i> Medallero General</h3>
+                    </div>
+                    <div class="card-body" id="medalleroList">
+                        <div class="loading">Cargando medallero...</div>
+                    </div>
+                </div>
+
+                <!-- Distribución por Edad -->
+                <div class="report-card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-chart-pie"></i> Distribución por Edad</h3>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="edadChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Ingresos Mensuales -->
+                <div class="report-card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-dollar-sign"></i> Ingresos Mensuales</h3>
+                        <select id="anioSelector" class="select-periodo" onchange="cargarIngresos()">
+                            <option value="2024">2024</option>
+                            <option value="2025">2025</option>
+                            <option value="2026" selected>2026</option>
+                        </select>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="ingresosChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Top Técnicas -->
+                <div class="report-card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-fist-raised"></i> Técnicas Más Dominadas</h3>
+                    </div>
+                    <div class="card-body" id="tecnicasList">
+                        <div class="loading">Cargando técnicas...</div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script>
+        let edadChart = null;
+        let ingresosChart = null;
+        
+        async function cargarMedallero() {
+            try {
+                const medallero = await getMedallero();
+                const container = document.getElementById('medalleroList');
+                
+                if (!medallero || medallero.length === 0) {
+                    container.innerHTML = '<div class="loading">No hay medallas registradas</div>';
+                    return;
+                }
+                
+                container.innerHTML = medallero.slice(0, 10).map((item, idx) => {
+                    let medallaIcono = '';
+                    if (idx === 0) medallaIcono = '🥇';
+                    else if (idx === 1) medallaIcono = '🥈';
+                    else if (idx === 2) medallaIcono = '🥉';
+                    else medallaIcono = '🏅';
+                    
+                    return `
+                        <div class="medallero-item">
+                            <div class="medalla">${medallaIcono}</div>
+                            <div class="medallero-info">
+                                <strong>${item.nombre}</strong>
+                                <div class="medallero-stats">
+                                    <span>🥇 ${item.oro || 0}</span>
+                                    <span>🥈 ${item.plata || 0}</span>
+                                    <span>🥉 ${item.bronce || 0}</span>
+                                </div>
+                            </div>
+                            <div class="ranking-valor">${item.total || 0} total</div>
+                        </div>
+                    `;
+                }).join('');
+            } catch (error) {
+                console.error('Error cargando medallero:', error);
+                document.getElementById('medalleroList').innerHTML = '<div class="loading">Error cargando medallero</div>';
+            }
+        }
+        
+        async function cargarDistribucionEdad() {
+            try {
+                const data = await apiCall('/reportes/demografia/edades');
+                const ctx = document.getElementById('edadChart').getContext('2d');
+                
+                if (edadChart) edadChart.destroy();
+                
+                edadChart = new Chart(ctx, {
+                    type: 'pie',
+                    data: {
+                        labels: Object.keys(data.distribucion || {}),
+                        datasets: [{
+                            data: Object.values(data.distribucion || {}),
+                            backgroundColor: ['#e94560', '#ff6b6b', '#feca57', '#48dbfb', '#ff9ff3', '#54a0ff', '#5f27cd'],
+                            borderWidth: 0
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: { position: 'bottom' },
+                            tooltip: { callbacks: { label: (ctx) => `${ctx.label}: ${ctx.raw} alumnos` } }
+                        }
+                    }
+                });
+            } catch (error) {
+                console.error('Error cargando distribución:', error);
+            }
+        }
+        
+        async function cargarIngresos() {
+            const anio = document.getElementById('anioSelector').value;
+            const meses = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+            const ingresosMensuales = [];
+            
+            for (let mes = 1; mes <= 12; mes++) {
+                try {
+                    const data = await apiCall(`/reportes/financiero/ingresos-mensuales?anio=${anio}&mes=${mes}`);
+                    ingresosMensuales.push(data.total || 0);
+                } catch (error) {
+                    ingresosMensuales.push(0);
+                }
+            }
+            
+            const ctx = document.getElementById('ingresosChart').getContext('2d');
+            
+            if (ingresosChart) ingresosChart.destroy();
+            
+            ingresosChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: meses,
+                    datasets: [{
+                        label: 'Ingresos ($)',
+                        data: ingresosMensuales,
+                        backgroundColor: '#e94560',
+                        borderRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: (ctx) => `$${ctx.raw.toLocaleString()}`
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: (value) => '$' + value.toLocaleString()
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        async function cargarTecnicas() {
+            try {
+                const tecnicas = await apiCall('/reportes/rendimiento/tecnicas');
+                const container = document.getElementById('tecnicasList');
+                
+                if (!tecnicas || tecnicas.length === 0) {
+                    container.innerHTML = '<div class="loading">No hay técnicas registradas</div>';
+                    return;
+                }
+                
+                container.innerHTML = tecnicas.slice(0, 10).map(tecnica => `
+                    <div class="medallero-item">
+                        <div class="medalla">🥋</div>
+                        <div class="medallero-info">
+                            <strong>${tecnica.tecnica}</strong>
+                            <div class="medallero-stats">
+                                <span>${tecnica.alumnos_que_la_dominan} alumnos</span>
+                                <span>Nivel promedio: ${tecnica.nivel_promedio}</span>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Error cargando técnicas:', error);
+                document.getElementById('tecnicasList').innerHTML = '<div class="loading">Error cargando técnicas</div>';
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            cargarMedallero();
+            cargarDistribucionEdad();
+            cargarIngresos();
+            cargarTecnicas();
+        });
+    </script>
+</body>
+</html>

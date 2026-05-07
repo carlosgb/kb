@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eventos y Torneos - WAKO Manager</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Estilos específicos para eventos */
+        .eventos-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .filtros {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .filtros select, .filtros input {
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            font-size: 14px;
+            background: white;
+        }
+
+        .filtros input {
+            width: 200px;
+        }
+
+        .btn-primary {
+            background: #e94560;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+
+        .btn-primary:hover {
+            background: #c73e56;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: #f0f2f5;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e4e8;
+        }
+
+        .grid-eventos {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+            gap: 25px;
+        }
+
+        .evento-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            transition: all 0.3s;
+        }
+
+        .evento-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+
+        .evento-card.inactivo {
+            opacity: 0.7;
+        }
+
+        .evento-header {
+            background: linear-gradient(135deg, #e94560, #c73e56);
+            color: white;
+            padding: 20px;
+            position: relative;
+        }
+
+        .evento-fecha {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            margin-bottom: 10px;
+        }
+
+        .evento-header h3 {
+            font-size: 20px;
+            margin-bottom: 5px;
+        }
+
+        .evento-header p {
+            font-size: 13px;
+            opacity: 0.9;
+        }
+
+        .evento-estado {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .evento-estado.proximo {
+            background: #10b981;
+        }
+
+        .evento-estado.cerrado {
+            background: #ef4444;
+        }
+
+        .evento-estado.finalizado {
+            background: #6b7280;
+        }
+
+        .evento-body {
+            padding: 20px;
+        }
+
+        .evento-info {
+            margin-bottom: 15px;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .info-item i {
+            width: 20px;
+            color: #e94560;
+        }
+
+        .evento-descripcion {
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: 12px;
+            margin: 15px 0;
+            font-size: 13px;
+            color: #666;
+            line-height: 1.5;
+        }
+
+        .evento-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #eef2f6;
+        }
+
+        .costo {
+            font-size: 18px;
+            font-weight: 700;
+            color: #e94560;
+        }
+
+        .costo small {
+            font-size: 11px;
+            font-weight: normal;
+            color: #999;
+        }
+
+        .inscritos {
+            font-size: 13px;
+            color: #666;
+        }
+
+        .evento-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-inscribir {
+            background: #e94560;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 13px;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .btn-inscribir:hover {
+            background: #c73e56;
+        }
+
+        .btn-ver {
+            background: #f0f2f5;
+            color: #1a1a2e;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 13px;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .btn-ver:hover {
+            background: #e0e4e8;
+        }
+
+        .btn-editar {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 13px;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .btn-editar:hover {
+            background: #2563eb;
+        }
+
+        .btn-eliminar {
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 13px;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .btn-eliminar:hover {
+            background: #dc2626;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 550px;
+            max-height: 85vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            padding: 20px 25px;
+            border-bottom: 1px solid #eef2f6;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            background: white;
+        }
+
+        .modal-header h3 {
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .modal-header h3 i {
+            color: #e94560;
+        }
+
+        .modal-body {
+            padding: 25px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #1a1a2e;
+        }
+
+        .form-group input, 
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            font-size: 14px;
+            font-family: inherit;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin: 15px 0;
+        }
+
+        .checkbox-group label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: normal;
+            cursor: pointer;
+        }
+
+        .checkbox-group input {
+            width: auto;
+            margin: 0;
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #999;
+        }
+
+        .close-modal:hover {
+            color: #e94560;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #eef2f6;
+        }
+
+        .lista-inscritos {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .inscrito-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            border-bottom: 1px solid #eef2f6;
+        }
+
+        .inscrito-item:hover {
+            background: #f8f9fa;
+        }
+
+        .inscrito-info {
+            flex: 1;
+        }
+
+        .inscrito-info strong {
+            display: block;
+        }
+
+        .inscrito-info small {
+            color: #666;
+            font-size: 12px;
+        }
+
+        .inscrito-pago {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .inscrito-pago.pagado {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .inscrito-pago.pendiente {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .btn-pago {
+            background: #10b981;
+            color: white;
+            border: none;
+            padding: 5px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 11px;
+            margin-left: 10px;
+        }
+
+        .btn-pago:hover {
+            background: #059669;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px;
+            color: #999;
+        }
+
+        .empty-state i {
+            font-size: 48px;
+            margin-bottom: 15px;
+            color: #ddd;
+        }
+
+        @media (max-width: 768px) {
+            .grid-eventos {
+                grid-template-columns: 1fr;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .eventos-header {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .filtros {
+                flex-direction: column;
+            }
+            
+            .filtros input, .filtros select {
+                width: 100%;
+            }
+            
+            .evento-actions {
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="logo">
+                <i class="fas fa-fist-raised"></i>
+                <span>WAKO Manager</span>
+            </div>
+            <nav class="nav-menu">
+                <a href="index.html" class="nav-item">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="alumnos.html" class="nav-item">
+                    <i class="fas fa-users"></i>
+                    <span>Alumnos</span>
+                </a>
+                <a href="maestros.html" class="nav-item">
+                    <i class="fas fa-chalkboard-user"></i>
+                    <span>Maestros</span>
+                </a>
+                <a href="horarios.html" class="nav-item">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>Horarios</span>
+                </a>
+                <a href="eventos.html" class="nav-item active">
+                    <i class="fas fa-trophy"></i>
+                    <span>Eventos</span>
+                </a>
+                <a href="reportes.html" class="nav-item">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Reportes</span>
+                </a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header class="top-bar">
+                <div class="page-title">
+                    <h1>Eventos y Torneos</h1>
+                    <p>Gestiona competencias, seminarios y exhibiciones</p>
+                </div>
+            </header>
+
+            <div class="eventos-header">
+                <div class="filtros">
+                    <input type="text" id="searchInput" placeholder="🔍 Buscar evento..." onkeyup="cargarEventos()">
+                    <select id="filtroTipo" onchange="cargarEventos()">
+                        <option value="">Todos los tipos</option>
+                        <option value="Torneo">🏆 Torneos</option>
+                        <option value="Seminario">📚 Seminarios</option>
+                        <option value="Exhibición">🥊 Exhibiciones</option>
+                        <option value="Clase Magistral">⭐ Clases Magistrales</option>
+                    </select>
+                    <select id="filtroEstado" onchange="cargarEventos()">
+                        <option value="">Todos</option>
+                        <option value="proximo">📅 Próximos</option>
+                        <option value="finalizado">✅ Finalizados</option>
+                    </select>
+                </div>
+                <button class="btn-primary" onclick="abrirModalNuevoEvento()">
+                    <i class="fas fa-plus"></i> Crear Evento
+                </button>
+            </div>
+
+            <div id="eventosGrid" class="grid-eventos">
+                <div class="loading">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <p>Cargando eventos...</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal Nuevo Evento -->
+    <div id="modalNuevoEvento" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-calendar-plus"></i> Crear Nuevo Evento</h3>
+                <button class="close-modal" onclick="cerrarModalNuevoEvento()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="formNuevoEvento">
+                    <div class="form-group">
+                        <label>Título *</label>
+                        <input type="text" id="new_titulo" required placeholder="Ej: Abierto de la Ciudad 2026">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Fecha *</label>
+                            <input type="date" id="new_fecha" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Hora *</label>
+                            <input type="time" id="new_hora" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Lugar *</label>
+                        <input type="text" id="new_lugar" required placeholder="Ej: Gimnasio Olímpico">
+                    </div>
+                    <div class="form-group">
+                        <label>Tipo *</label>
+                        <select id="new_tipo" required>
+                            <option value="Torneo">🏆 Torneo</option>
+                            <option value="Seminario">📚 Seminario</option>
+                            <option value="Exhibición">🥊 Exhibición</option>
+                            <option value="Clase Magistral">⭐ Clase Magistral</option>
+                        </select>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Costo Inscripción</label>
+                            <input type="number" id="new_costo_inscripcion" value="0" step="50">
+                        </div>
+                        <div class="form-group">
+                            <label>Costo Acompañante</label>
+                            <input type="number" id="new_costo_acompanante" value="0" step="50">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Fecha Cierre Inscripción</label>
+                        <input type="date" id="new_fecha_cierre">
+                    </div>
+                    <div class="form-group">
+                        <label>Descripción</label>
+                        <textarea id="new_descripcion" rows="3" placeholder="Describe el evento..."></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn-secondary" onclick="cerrarModalNuevoEvento()">Cancelar</button>
+                        <button type="submit" class="btn-primary">Crear Evento</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Editar Evento -->
+    <div id="modalEditarEvento" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-edit"></i> Editar Evento</h3>
+                <button class="close-modal" onclick="cerrarModalEditarEvento()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="formEditarEvento">
+                    <input type="hidden" id="edit_id">
+                    <div class="form-group">
+                        <label>Título *</label>
+                        <input type="text" id="edit_titulo" required>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Fecha *</label>
+                            <input type="date" id="edit_fecha" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Hora *</label>
+                            <input type="time" id="edit_hora" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Lugar *</label>
+                        <input type="text" id="edit_lugar" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Tipo *</label>
+                        <select id="edit_tipo" required>
+                            <option value="Torneo">🏆 Torneo</option>
+                            <option value="Seminario">📚 Seminario</option>
+                            <option value="Exhibición">🥊 Exhibición</option>
+                            <option value="Clase Magistral">⭐ Clase Magistral</option>
+                        </select>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Costo Inscripción</label>
+                            <input type="number" id="edit_costo_inscripcion" step="50">
+                        </div>
+                        <div class="form-group">
+                            <label>Costo Acompañante</label>
+                            <input type="number" id="edit_costo_acompanante" step="50">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Fecha Cierre Inscripción</label>
+                        <input type="date" id="edit_fecha_cierre">
+                    </div>
+                    <div class="form-group">
+                        <label>Descripción</label>
+                        <textarea id="edit_descripcion" rows="3"></textarea>
+                    </div>
+                    <div class="checkbox-group">
+                        <label>
+                            <input type="checkbox" id="edit_activo"> Evento Activo
+                        </label>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn-secondary" onclick="cerrarModalEditarEvento()">Cancelar</button>
+                        <button type="submit" class="btn-primary">Guardar Cambios</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Inscripción -->
+    <div id="modalInscripcion" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-user-plus"></i> Inscribir Alumno</h3>
+                <button class="close-modal" onclick="cerrarModalInscripcion()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Evento</label>
+                    <input type="text" id="inscribirEventoNombre" readonly style="background: #f5f5f5;">
+                </div>
+                <div class="form-group">
+                    <label>Seleccionar Alumno</label>
+                    <select id="inscribirAlumnoId" required>
+                        <option value="">-- Seleccione un alumno --</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Número de Acompañantes</label>
+                    <input type="number" id="inscribirAcompanantes" value="0" min="0">
+                </div>
+                <div class="form-group">
+                    <label>Categoría (opcional)</label>
+                    <input type="text" id="inscribirCategoria" placeholder="Ej: Senior -75kg">
+                </div>
+                <div class="form-group">
+                    <label>Peso Registrado (kg)</label>
+                    <input type="number" id="inscribirPeso" step="0.1" placeholder="Peso actual">
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn-secondary" onclick="cerrarModalInscripcion()">Cancelar</button>
+                    <button type="button" class="btn-primary" onclick="confirmarInscripcion()">Inscribir Alumno</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Ver Inscritos -->
+    <div id="modalVerInscritos" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-users"></i> Alumnos Inscritos</h3>
+                <button class="close-modal" onclick="cerrarModalVerInscritos()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Evento</label>
+                    <input type="text" id="verInscritosEventoNombre" readonly style="background: #f5f5f5;">
+                </div>
+                <div id="listaInscritos" class="lista-inscritos">
+                    <div class="loading">Cargando...</div>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn-secondary" onclick="cerrarModalVerInscritos()">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script src="js/eventos.js"></script>
+</body>
+</html>

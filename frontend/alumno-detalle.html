@@ -1,0 +1,1187 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalle del Alumno - WAKO Manager</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .detalle-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .btn-volver {
+            background: #f0f2f5;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            margin-bottom: 20px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-volver:hover {
+            background: #e0e4e8;
+        }
+        
+        .perfil-header {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .perfil-info {
+            display: flex;
+            gap: 25px;
+            align-items: center;
+        }
+        
+        .avatar {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, #e94560, #c73e56);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 40px;
+        }
+        
+        .info-basica h2 {
+            font-size: 28px;
+            margin-bottom: 5px;
+        }
+        
+        .info-basica p {
+            color: #666;
+            margin-bottom: 10px;
+        }
+        
+        .badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-block;
+        }
+        
+        .badge.activo {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        
+        .badge.inactivo {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        
+        .badge.pagado {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        
+        .badge.vencido {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        
+        .stats-mini {
+            display: flex;
+            gap: 30px;
+        }
+        
+        .stat-mini {
+            text-align: center;
+        }
+        
+        .stat-mini .numero {
+            font-size: 28px;
+            font-weight: 700;
+            color: #e94560;
+        }
+        
+        .stat-mini .label {
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .acciones-header {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .btn-primary, .btn-secondary, .btn-danger {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background: #e94560;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #c73e56;
+            transform: translateY(-2px);
+        }
+        
+        .btn-secondary {
+            background: #f0f2f5;
+            color: #1a1a2e;
+        }
+        
+        .btn-secondary:hover {
+            background: #e0e4e8;
+        }
+        
+        .btn-danger {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        
+        .btn-danger:hover {
+            background: #fecaca;
+        }
+        
+        .tabs {
+            display: flex;
+            gap: 5px;
+            background: white;
+            border-radius: 12px;
+            padding: 5px;
+            margin-bottom: 25px;
+        }
+        
+        .tab {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            background: none;
+            cursor: pointer;
+            border-radius: 10px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        
+        .tab.active {
+            background: #e94560;
+            color: white;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            margin-bottom: 25px;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+        }
+        
+        .card-header {
+            padding: 20px 25px;
+            background: white;
+            border-bottom: 1px solid #eef2f6;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .card-header h3 {
+            font-size: 18px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .card-header h3 i {
+            color: #e94560;
+        }
+        
+        .card-body {
+            padding: 20px 25px;
+        }
+        
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #eef2f6;
+        }
+        
+        .info-row:last-child {
+            border-bottom: none;
+        }
+        
+        .info-label {
+            color: #666;
+            font-weight: 500;
+        }
+        
+        .info-value {
+            font-weight: 500;
+        }
+        
+        .progreso {
+            margin-top: 15px;
+        }
+        
+        .progreso-bar {
+            background: #eef2f6;
+            border-radius: 10px;
+            height: 8px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        
+        .progreso-fill {
+            background: #e94560;
+            height: 100%;
+            border-radius: 10px;
+            transition: width 0.3s;
+        }
+        
+        .lista-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #eef2f6;
+        }
+        
+        .lista-item:last-child {
+            border-bottom: none;
+        }
+        
+        .medalla-icono {
+            font-size: 24px;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 85vh;
+            overflow-y: auto;
+        }
+        
+        .modal-header {
+            padding: 20px 25px;
+            border-bottom: 1px solid #eef2f6;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-body {
+            padding: 25px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+        }
+        
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+        }
+        
+        @media (max-width: 768px) {
+            .perfil-header {
+                flex-direction: column;
+            }
+            
+            .stats-mini {
+                justify-content: space-around;
+                width: 100%;
+            }
+            
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="logo">
+                <i class="fas fa-fist-raised"></i>
+                <span>WAKO Manager</span>
+            </div>
+            <nav class="nav-menu">
+                <a href="index.html" class="nav-item">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="alumnos.html" class="nav-item active">
+                    <i class="fas fa-users"></i>
+                    <span>Alumnos</span>
+                </a>
+                <a href="maestros.html" class="nav-item">
+                    <i class="fas fa-chalkboard-user"></i>
+                    <span>Maestros</span>
+                </a>
+                <a href="horarios.html" class="nav-item">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>Horarios</span>
+                </a>
+                <a href="eventos.html" class="nav-item">
+                    <i class="fas fa-trophy"></i>
+                    <span>Eventos</span>
+                </a>
+                <a href="reportes.html" class="nav-item">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Reportes</span>
+                </a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <div class="detalle-container">
+                <button class="btn-volver" onclick="window.location.href='alumnos.html'">
+                    <i class="fas fa-arrow-left"></i> Volver
+                </button>
+
+                <div id="loading" style="text-align: center; padding: 60px;">Cargando información del alumno...</div>
+                
+                <div id="contenido" style="display: none;">
+                    <!-- Perfil Header -->
+                    <div class="perfil-header">
+                        <div class="perfil-info">
+                            <div class="avatar">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div class="info-basica">
+                                <h2 id="alumnoNombre"></h2>
+                                <p id="alumnoCategoria"></p>
+                                <div>
+                                    <span class="badge" id="estatusBadge"></span>
+                                    <span class="badge" id="pagoBadge" style="margin-left: 8px;"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="stats-mini">
+                            <div class="stat-mini">
+                                <div class="numero" id="edad">-</div>
+                                <div class="label">Edad</div>
+                            </div>
+                            <div class="stat-mini">
+                                <div class="numero" id="imc">-</div>
+                                <div class="label">IMC</div>
+                            </div>
+                            <div class="stat-mini">
+                                <div class="numero" id="asistencias">-</div>
+                                <div class="label">Asistencias</div>
+                            </div>
+                            <div class="stat-mini">
+                                <div class="numero" id="logros">-</div>
+                                <div class="label">Logros</div>
+                            </div>
+                        </div>
+                        <div class="acciones-header">
+                            <button class="btn-secondary" onclick="editarAlumno()">
+                                <i class="fas fa-edit"></i> Editar
+                            </button>
+                            <button class="btn-primary" onclick="marcarAsistencia()">
+                                <i class="fas fa-check"></i> Asistencia
+                            </button>
+                            <button class="btn-primary" onclick="registrarPago()">
+                                <i class="fas fa-dollar-sign"></i> Pagar
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Tabs -->
+                    <div class="tabs">
+                        <button class="tab active" onclick="showTab('info')">Información Personal</button>
+                        <button class="tab" onclick="showTab('expediente')">Expediente</button>
+                        <button class="tab" onclick="showTab('deportivo')">Progreso Deportivo</button>
+                        <button class="tab" onclick="showTab('logros')">Logros y Medallas</button>
+                        <button class="tab" onclick="showTab('pagos')">Historial de Pagos</button>
+                    </div>
+
+                    <!-- Tab Información Personal -->
+                    <div id="tab-info" class="tab-content active">
+                        <div class="info-grid">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h3><i class="fas fa-user"></i> Datos Personales</h3>
+                                    <button class="btn-secondary" onclick="editarSeccion('personal')" style="padding: 5px 10px;">
+                                        <i class="fas fa-edit"></i> Editar
+                                    </button>
+                                </div>
+                                <div class="card-body" id="datosPersonales"></div>
+                            </div>
+                            <div class="card">
+                                <div class="card-header">
+                                    <h3><i class="fas fa-map-marker-alt"></i> Domicilio</h3>
+                                    <button class="btn-secondary" onclick="editarSeccion('domicilio')" style="padding: 5px 10px;">
+                                        <i class="fas fa-edit"></i> Editar
+                                    </button>
+                                </div>
+                                <div class="card-body" id="domicilio"></div>
+                            </div>
+                            <div class="card">
+                                <div class="card-header">
+                                    <h3><i class="fas fa-phone"></i> Contacto</h3>
+                                    <button class="btn-secondary" onclick="editarSeccion('contacto')" style="padding: 5px 10px;">
+                                        <i class="fas fa-edit"></i> Editar
+                                    </button>
+                                </div>
+                                <div class="card-body" id="contacto"></div>
+                            </div>
+                            <div class="card">
+                                <div class="card-header">
+                                    <h3><i class="fas fa-chart-line"></i> Datos Físicos</h3>
+                                    <button class="btn-secondary" onclick="registrarPeso()" style="padding: 5px 10px;">
+                                        <i class="fas fa-plus"></i> Registrar Peso
+                                    </button>
+                                </div>
+                                <div class="card-body" id="datosFisicos"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tab Expediente -->
+                    <div id="tab-expediente" class="tab-content">
+                        <div class="info-grid">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h3><i class="fas fa-heartbeat"></i> Datos Médicos</h3>
+                                    <button class="btn-secondary" onclick="editarExpediente()" style="padding: 5px 10px;">
+                                        <i class="fas fa-edit"></i> Editar
+                                    </button>
+                                </div>
+                                <div class="card-body" id="datosMedicos"></div>
+                            </div>
+                            <div class="card">
+                                <div class="card-header">
+                                    <h3><i class="fas fa-ambulance"></i> Contacto de Emergencia</h3>
+                                </div>
+                                <div class="card-body" id="contactoEmergencia"></div>
+                            </div>
+                            <div class="card">
+                                <div class="card-header">
+                                    <h3><i class="fas fa-file-signature"></i> Documentos Legales</h3>
+                                </div>
+                                <div class="card-body" id="documentosLegales"></div>
+                            </div>
+                            <div class="card">
+                                <div class="card-header">
+                                    <h3><i class="fas fa-stethoscope"></i> Certificado Médico</h3>
+                                </div>
+                                <div class="card-body" id="certificadoMedico"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tab Progreso Deportivo -->
+                    <div id="tab-deportivo" class="tab-content">
+                        <div class="info-grid">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h3><i class="fas fa-chart-line"></i> Historial de Peso</h3>
+                                    <button class="btn-secondary" onclick="registrarPeso()" style="padding: 5px 10px;">
+                                        <i class="fas fa-plus"></i> Registrar
+                                    </button>
+                                </div>
+                                <div class="card-body" id="historialPeso"></div>
+                            </div>
+                            <div class="card">
+                                <div class="card-header">
+                                    <h3><i class="fas fa-graduation-cap"></i> Historial de Grados</h3>
+                                    <button class="btn-secondary" onclick="registrarAscenso()" style="padding: 5px 10px;">
+                                        <i class="fas fa-plus"></i> Registrar Ascenso
+                                    </button>
+                                </div>
+                                <div class="card-body" id="historialGrados"></div>
+                            </div>
+                            <div class="card">
+                                <div class="card-header">
+                                    <h3><i class="fas fa-fist-raised"></i> Técnicas Dominadas</h3>
+                                    <button class="btn-secondary" onclick="agregarTecnica()" style="padding: 5px 10px;">
+                                        <i class="fas fa-plus"></i> Agregar
+                                    </button>
+                                </div>
+                                <div class="card-body" id="tecnicas"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tab Logros -->
+                    <div id="tab-logros" class="tab-content">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3><i class="fas fa-medal"></i> Medallas y Reconocimientos</h3>
+                                <button class="btn-primary" onclick="agregarLogro()">
+                                    <i class="fas fa-plus"></i> Agregar Logro
+                                </button>
+                            </div>
+                            <div class="card-body" id="logrosList"></div>
+                        </div>
+                    </div>
+
+                    <!-- Tab Pagos -->
+                    <div id="tab-pagos" class="tab-content">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3><i class="fas fa-history"></i> Historial de Pagos</h3>
+                            </div>
+                            <div class="card-body" id="historialPagos"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal Editar Alumno -->
+    <div id="modalEditarAlumno" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Editar Alumno</h3>
+                <button class="close-modal" onclick="cerrarModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="formEditarAlumno">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Nombre</label>
+                            <input type="text" id="edit_nombre">
+                        </div>
+                        <div class="form-group">
+                            <label>Apellidos</label>
+                            <input type="text" id="edit_apellidos">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Teléfono Celular</label>
+                        <input type="tel" id="edit_telefono">
+                    </div>
+                    <div class="form-group">
+                        <label>Calle</label>
+                        <input type="text" id="edit_calle">
+                    </div>
+                    <div class="form-group">
+                        <label>Ciudad</label>
+                        <input type="text" id="edit_ciudad">
+                    </div>
+                    <div class="form-group">
+                        <label>Altura (m)</label>
+                        <input type="number" id="edit_altura" step="0.01">
+                    </div>
+                    <div class="form-group">
+                        <label>Peso Actual (kg)</label>
+                        <input type="number" id="edit_peso" step="0.1">
+                    </div>
+                    <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px;">
+                        <button type="button" class="btn-secondary" onclick="cerrarModal()">Cancelar</button>
+                        <button type="submit" class="btn-primary">Guardar Cambios</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Registrar Peso -->
+    <div id="modalPeso" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Registrar Nuevo Peso</h3>
+                <button class="close-modal" onclick="cerrarModalPeso()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Peso (kg)</label>
+                    <input type="number" id="nuevoPeso" step="0.1" required>
+                </div>
+                <div class="form-group">
+                    <label>Fecha</label>
+                    <input type="date" id="fechaPeso">
+                </div>
+                <button class="btn-primary" onclick="guardarNuevoPeso()" style="width: 100%;">Guardar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Registro de Grado -->
+    <div id="modalGrado" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Registrar Ascenso de Grado</h3>
+                <button class="close-modal" onclick="cerrarModalGrado()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Nuevo Grado</label>
+                    <input type="text" id="nuevoGrado" placeholder="Ej: Cinturón Amarillo" required>
+                </div>
+                <div class="form-group">
+                    <label>Evaluador</label>
+                    <input type="text" id="evaluador" placeholder="Nombre del instructor">
+                </div>
+                <button class="btn-primary" onclick="guardarNuevoGrado()" style="width: 100%;">Guardar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Agregar Logro -->
+    <div id="modalLogro" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Agregar Logro / Medalla</h3>
+                <button class="close-modal" onclick="cerrarModalLogro()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Torneo / Evento</label>
+                    <input type="text" id="logroTorneo" required>
+                </div>
+                <div class="form-group">
+                    <label>Medalla</label>
+                    <select id="logroMedalla">
+                        <option value="Oro">🥇 Oro</option>
+                        <option value="Plata">🥈 Plata</option>
+                        <option value="Bronce">🥉 Bronce</option>
+                        <option value="Participación">🎖️ Participación</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Modalidad</label>
+                    <input type="text" id="logroModalidad" placeholder="Ej: Point Fighting">
+                </div>
+                <div class="form-group">
+                    <label>Categoría de Peso</label>
+                    <input type="text" id="logroCategoriaPeso" placeholder="Ej: -75kg">
+                </div>
+                <div class="form-group">
+                    <label>Fecha</label>
+                    <input type="date" id="logroFecha">
+                </div>
+                <button class="btn-primary" onclick="guardarLogro()" style="width: 100%;">Guardar Logro</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Expediente -->
+    <div id="modalExpediente" class="modal">
+        <div class="modal-content" style="max-width: 600px;">
+            <div class="modal-header">
+                <h3>Editar Expediente Médico</h3>
+                <button class="close-modal" onclick="cerrarModalExpediente()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Tipo de Sangre</label>
+                    <select id="exp_tipoSangre">
+                        <option value="">Seleccionar</option>
+                        <option value="A+">A+</option>
+                        <option value="A-">A-</option>
+                        <option value="B+">B+</option>
+                        <option value="B-">B-</option>
+                        <option value="AB+">AB+</option>
+                        <option value="AB-">AB-</option>
+                        <option value="O+">O+</option>
+                        <option value="O-">O-</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Alergias</label>
+                    <textarea id="exp_alergias" rows="2" placeholder="Ej: Penicilina, mariscos..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Condiciones Crónicas</label>
+                    <textarea id="exp_condiciones" rows="2" placeholder="Ej: Asma, diabetes..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Contacto de Emergencia - Nombre</label>
+                    <input type="text" id="exp_emergenciaNombre">
+                </div>
+                <div class="form-group">
+                    <label>Contacto de Emergencia - Teléfono</label>
+                    <input type="tel" id="exp_emergenciaTelefono">
+                </div>
+                <div class="form-group">
+                    <label>Fecha Certificado Médico</label>
+                    <input type="date" id="exp_fechaCertificado">
+                </div>
+                <div class="checkbox-group" style="margin: 15px 0;">
+                    <label style="display: flex; align-items: center; gap: 8px;">
+                        <input type="checkbox" id="exp_deslinde"> Deslinde firmado
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 8px; margin-top: 8px;">
+                        <input type="checkbox" id="exp_reglamento"> Reglamento aceptado
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 8px; margin-top: 8px;">
+                        <input type="checkbox" id="exp_imagen"> Uso de imagen autorizado
+                    </label>
+                </div>
+                <button class="btn-primary" onclick="guardarExpediente()" style="width: 100%;">Guardar Expediente</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script>
+        let alumnoId = null;
+        let alumnoData = null;
+        let expedienteData = null;
+
+        // Obtener ID de la URL
+        const urlParams = new URLSearchParams(window.location.search);
+        alumnoId = urlParams.get('id');
+
+        // Cargar datos del alumno
+        async function cargarAlumno() {
+            if (!alumnoId) {
+                window.location.href = 'alumnos.html';
+                return;
+            }
+
+            try {
+                const [alumno, expediente] = await Promise.all([
+                    getAlumno(alumnoId),
+                    apiCall(`/alumnos/${alumnoId}/expediente`).catch(() => null)
+                ]);
+                
+                alumnoData = alumno;
+                expedienteData = expediente;
+                
+                renderPerfil();
+                renderDatosPersonales();
+                renderDomicilio();
+                renderContacto();
+                renderDatosFisicos();
+                renderExpediente();
+                renderHistoriales();
+                renderLogros();
+                
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('contenido').style.display = 'block';
+            } catch (error) {
+                console.error('Error cargando alumno:', error);
+                document.getElementById('loading').innerHTML = '<div style="color: red;">Error cargando datos del alumno</div>';
+            }
+        }
+
+        function renderPerfil() {
+            document.getElementById('alumnoNombre').innerText = `${alumnoData.nombre} ${alumnoData.apellidos}`;
+            document.getElementById('alumnoCategoria').innerHTML = `<i class="fas fa-tag"></i> ${alumnoData.categoria_generica || 'Sin categoría'}`;
+            
+            const estatusBadge = document.getElementById('estatusBadge');
+            estatusBadge.innerText = alumnoData.activo ? 'Activo' : 'Inactivo';
+            estatusBadge.className = `badge ${alumnoData.activo ? 'activo' : 'inactivo'}`;
+            
+            const pagoBadge = document.getElementById('pagoBadge');
+            pagoBadge.innerText = alumnoData.estado_pago || 'Al corriente';
+            pagoBadge.className = `badge ${alumnoData.estado_pago === 'Al corriente' ? 'pagado' : 'vencido'}`;
+            
+            document.getElementById('edad').innerText = alumnoData.edad || '-';
+            document.getElementById('imc').innerText = alumnoData.imc || '-';
+            document.getElementById('asistencias').innerText = alumnoData.asistencias_totales || '0';
+            document.getElementById('logros').innerText = alumnoData.total_logros || '0';
+        }
+
+        function renderDatosPersonales() {
+            const html = `
+                <div class="info-row"><span class="info-label">Nombre completo:</span><span class="info-value">${alumnoData.nombre} ${alumnoData.apellidos}</span></div>
+                <div class="info-row"><span class="info-label">Sexo:</span><span class="info-value">${alumnoData.sexo === 'M' ? 'Masculino' : (alumnoData.sexo === 'F' ? 'Femenino' : 'Otro')}</span></div>
+                <div class="info-row"><span class="info-label">Fecha nacimiento:</span><span class="info-value">${alumnoData.fecha_nacimiento}</span></div>
+                <div class="info-row"><span class="info-label">Edad:</span><span class="info-value">${alumnoData.edad} años</span></div>
+                <div class="info-row"><span class="info-label">Email:</span><span class="info-value">${alumnoData.email || 'No registrado'}</span></div>
+                <div class="info-row"><span class="info-label">Escuela:</span><span class="info-value">${alumnoData.escuela || 'No registrada'}</span></div>
+                <div class="info-row"><span class="info-label">Grado escolar:</span><span class="info-value">${alumnoData.grado_escolar || 'No registrado'}</span></div>
+            `;
+            document.getElementById('datosPersonales').innerHTML = html;
+        }
+
+        function renderDomicilio() {
+            const html = `
+                <div class="info-row"><span class="info-label">Calle:</span><span class="info-value">${alumnoData.calle || 'No registrada'}</span></div>
+                <div class="info-row"><span class="info-label">Número:</span><span class="info-value">${alumnoData.numero || 'S/N'}</span></div>
+                <div class="info-row"><span class="info-label">Colonia:</span><span class="info-value">${alumnoData.colonia || 'No registrada'}</span></div>
+                <div class="info-row"><span class="info-label">Ciudad:</span><span class="info-value">${alumnoData.ciudad || 'No registrada'}</span></div>
+                <div class="info-row"><span class="info-label">Código Postal:</span><span class="info-value">${alumnoData.codigo_postal || 'No registrado'}</span></div>
+            `;
+            document.getElementById('domicilio').innerHTML = html;
+        }
+
+        function renderContacto() {
+            const html = `
+                <div class="info-row"><span class="info-label">Teléfono celular:</span><span class="info-value">${alumnoData.telefono_celular || 'No registrado'}</span></div>
+                <div class="info-row"><span class="info-label">Teléfono casa:</span><span class="info-value">${alumnoData.telefono_casa || 'No registrado'}</span></div>
+            `;
+            document.getElementById('contacto').innerHTML = html;
+        }
+
+        function renderDatosFisicos() {
+            const html = `
+                <div class="info-row"><span class="info-label">Altura:</span><span class="info-value">${alumnoData.altura} m</span></div>
+                <div class="info-row"><span class="info-label">Peso actual:</span><span class="info-value">${alumnoData.peso_actual} kg</span></div>
+                <div class="info-row"><span class="info-label">IMC:</span><span class="info-value">${alumnoData.imc}</span></div>
+                <div class="info-row"><span class="info-label">Categoría:</span><span class="info-value">${alumnoData.categoria_generica || 'Sin categoría'}</span></div>
+            `;
+            document.getElementById('datosFisicos').innerHTML = html;
+        }
+
+        function renderExpediente() {
+            if (!expedienteData) {
+                document.getElementById('datosMedicos').innerHTML = '<div class="info-row">No hay datos médicos registrados</div>';
+                document.getElementById('contactoEmergencia').innerHTML = '<div class="info-row">No hay contacto de emergencia</div>';
+                document.getElementById('documentosLegales').innerHTML = '<div class="info-row">No hay documentos registrados</div>';
+                document.getElementById('certificadoMedico').innerHTML = '<div class="info-row">No hay certificado médico</div>';
+                return;
+            }
+
+            document.getElementById('datosMedicos').innerHTML = `
+                <div class="info-row"><span class="info-label">Tipo de sangre:</span><span class="info-value">${expedienteData.tipo_sangre || 'No registrado'}</span></div>
+                <div class="info-row"><span class="info-label">Alergias:</span><span class="info-value">${expedienteData.alergias || 'Ninguna'}</span></div>
+                <div class="info-row"><span class="info-label">Condiciones crónicas:</span><span class="info-value">${expedienteData.condiciones_cronicas || 'Ninguna'}</span></div>
+                <div class="info-row"><span class="info-label">Medicamentos:</span><span class="info-value">${expedienteData.medicamentos_actuales || 'Ninguno'}</span></div>
+            `;
+
+            document.getElementById('contactoEmergencia').innerHTML = `
+                <div class="info-row"><span class="info-label">Nombre:</span><span class="info-value">${expedienteData.contacto_emergencia_nombre || 'No registrado'}</span></div>
+                <div class="info-row"><span class="info-label">Parentesco:</span><span class="info-value">${expedienteData.contacto_emergencia_parentesco || 'No registrado'}</span></div>
+                <div class="info-row"><span class="info-label">Teléfono:</span><span class="info-value">${expedienteData.contacto_emergencia_telefono || 'No registrado'}</span></div>
+                <div class="info-row"><span class="info-label">Teléfono alternativo:</span><span class="info-value">${expedienteData.contacto_emergencia_telefono_alt || 'No registrado'}</span></div>
+            `;
+
+            const docs = [];
+            if (expedienteData.deslinde_firmado) docs.push('✓ Deslinde firmado');
+            if (expedienteData.reglamento_aceptado) docs.push('✓ Reglamento aceptado');
+            if (expedienteData.uso_imagen_autorizado) docs.push('✓ Uso de imagen autorizado');
+            if (expedienteData.autorizacion_paterna_firmada) docs.push('✓ Autorización paterna');
+            
+            document.getElementById('documentosLegales').innerHTML = docs.length ? 
+                docs.map(d => `<div class="info-row"><span class="info-value">${d}</span></div>`).join('') :
+                '<div class="info-row">No hay documentos firmados</div>';
+
+            const certificadoVigente = expedienteData.certificado_vigente;
+            document.getElementById('certificadoMedico').innerHTML = `
+                <div class="info-row"><span class="info-label">Fecha:</span><span class="info-value">${expedienteData.fecha_certificado_medico || 'No registrado'}</span></div>
+                <div class="info-row"><span class="info-label">Médico:</span><span class="info-value">${expedienteData.nombre_medico_certifica || 'No registrado'}</span></div>
+                <div class="info-row"><span class="info-label">Estado:</span><span class="info-value"><span class="badge ${certificadoVigente ? 'activo' : 'vencido'}">${certificadoVigente ? 'Vigente' : 'Vencido'}</span></span></div>
+            `;
+        }
+
+        async function renderHistoriales() {
+            try {
+                const [pesos, grados, tecnicas] = await Promise.all([
+                    apiCall(`/alumnos/${alumnoId}/historial-pesos`),
+                    apiCall(`/alumnos/${alumnoId}/historial-grados`),
+                    apiCall(`/alumnos/${alumnoId}/tecnicas`).catch(() => [])
+                ]);
+                
+                document.getElementById('historialPeso').innerHTML = pesos?.length ? 
+                    pesos.slice(0,10).map(p => `<div class="info-row"><span class="info-label">${p.fecha}:</span><span class="info-value">${p.peso} kg</span></div>`).join('') :
+                    '<div class="info-row">No hay registros de peso</div>';
+                
+                document.getElementById('historialGrados').innerHTML = grados?.length ?
+                    grados.map(g => `<div class="info-row"><span class="info-label">${g.fecha_ascenso}:</span><span class="info-value">${g.grado} ${g.evaluador ? `(Evaluador: ${g.evaluador})` : ''}</span></div>`).join('') :
+                    '<div class="info-row">No hay historial de grados</div>';
+                
+                document.getElementById('tecnicas').innerHTML = tecnicas?.length ?
+                    tecnicas.map(t => `<div class="info-row"><span class="info-label">${t.nombre_tecnica}:</span><span class="info-value">Nivel ${t.nivel_dominio} - ${t.nivel_texto}</span></div>`).join('') :
+                    '<div class="info-row">No hay técnicas registradas</div>';
+            } catch (error) {
+                console.error('Error cargando historiales:', error);
+            }
+        }
+
+        async function renderLogros() {
+            try {
+                const logros = await apiCall(`/alumnos/${alumnoId}/logros`);
+                const container = document.getElementById('logrosList');
+                
+                if (!logros?.length) {
+                    container.innerHTML = '<div class="info-row">No hay logros registrados</div>';
+                    return;
+                }
+                
+                container.innerHTML = logros.map(l => `
+                    <div class="lista-item">
+                        <div class="medalla-icono">${l.medalla === 'Oro' ? '🥇' : (l.medalla === 'Plata' ? '🥈' : (l.medalla === 'Bronce' ? '🥉' : '🎖️'))}</div>
+                        <div style="flex: 1; margin-left: 15px;">
+                            <strong>${l.torneo_nombre}</strong><br>
+                            <small>${l.modalidad} • ${l.categoria_peso || 'Sin categoría'} • ${l.fecha}</small>
+                        </div>
+                        <div><strong>${l.medalla}</strong></div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Error cargando logros:', error);
+                document.getElementById('logrosList').innerHTML = '<div class="info-row">Error cargando logros</div>';
+            }
+        }
+
+        // Funciones de acción
+        function showTab(tabName) {
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            document.getElementById(`tab-${tabName}`).classList.add('active');
+        }
+
+        function editarAlumno() {
+            document.getElementById('edit_nombre').value = alumnoData.nombre;
+            document.getElementById('edit_apellidos').value = alumnoData.apellidos;
+            document.getElementById('edit_telefono').value = alumnoData.telefono_celular || '';
+            document.getElementById('edit_calle').value = alumnoData.calle || '';
+            document.getElementById('edit_ciudad').value = alumnoData.ciudad || '';
+            document.getElementById('edit_altura').value = alumnoData.altura;
+            document.getElementById('edit_peso').value = alumnoData.peso_actual;
+            document.getElementById('modalEditarAlumno').style.display = 'flex';
+        }
+
+        async function marcarAsistencia() {
+            try {
+                await apiCall(`/alumnos/${alumnoId}/asistencia`, 'PUT');
+                alert('Asistencia registrada correctamente');
+                cargarAlumno();
+            } catch (error) {
+                alert('Error al registrar asistencia');
+            }
+        }
+
+        async function registrarPago() {
+            try {
+                await apiCall(`/alumnos/${alumnoId}/pagar-mensualidad`, 'PUT');
+                alert('Pago registrado correctamente');
+                cargarAlumno();
+            } catch (error) {
+                alert('Error al registrar pago');
+            }
+        }
+
+        function registrarPeso() {
+            document.getElementById('modalPeso').style.display = 'flex';
+            document.getElementById('fechaPeso').value = new Date().toISOString().split('T')[0];
+        }
+
+        async function guardarNuevoPeso() {
+            const peso = document.getElementById('nuevoPeso').value;
+            if (!peso) {
+                alert('Ingrese el peso');
+                return;
+            }
+            
+            try {
+                await apiCall(`/alumnos/${alumnoId}/peso`, 'POST', {
+                    peso: parseFloat(peso),
+                    fecha: document.getElementById('fechaPeso').value
+                });
+                alert('Peso registrado correctamente');
+                cerrarModalPeso();
+                cargarAlumno();
+            } catch (error) {
+                alert('Error al registrar peso');
+            }
+        }
+
+        function registrarAscenso() {
+            document.getElementById('modalGrado').style.display = 'flex';
+        }
+
+        async function guardarNuevoGrado() {
+            const grado = document.getElementById('nuevoGrado').value;
+            if (!grado) {
+                alert('Ingrese el nuevo grado');
+                return;
+            }
+            
+            try {
+                await apiCall(`/alumnos/${alumnoId}/ascender`, 'POST', {
+                    grado: grado,
+                    evaluador: document.getElementById('evaluador').value
+                });
+                alert('Ascenso registrado correctamente');
+                cerrarModalGrado();
+                cargarAlumno();
+            } catch (error) {
+                alert('Error al registrar ascenso');
+            }
+        }
+
+        function agregarTecnica() {
+            const tecnica = prompt('Ingrese el nombre de la técnica:');
+            if (tecnica) {
+                const nivel = prompt('Nivel de dominio (1-5):', '1');
+                apiCall(`/alumnos/${alumnoId}/tecnicas`, 'POST', {
+                    nombre_tecnica: tecnica,
+                    nivel_dominio: parseInt(nivel)
+                }).then(() => {
+                    alert('Técnica agregada');
+                    cargarAlumno();
+                }).catch(() => alert('Error al agregar técnica'));
+            }
+        }
+
+        function agregarLogro() {
+            document.getElementById('modalLogro').style.display = 'flex';
+            document.getElementById('logroFecha').value = new Date().toISOString().split('T')[0];
+        }
+
+        async function guardarLogro() {
+            const data = {
+                torneo_nombre: document.getElementById('logroTorneo').value,
+                medalla: document.getElementById('logroMedalla').value,
+                modalidad: document.getElementById('logroModalidad').value,
+                categoria_peso: document.getElementById('logroCategoriaPeso').value,
+                fecha: document.getElementById('logroFecha').value
+            };
+            
+            if (!data.torneo_nombre || !data.modalidad) {
+                alert('Complete los campos requeridos');
+                return;
+            }
+            
+            try {
+                await apiCall(`/alumnos/${alumnoId}/logros`, 'POST', data);
+                alert('Logro registrado correctamente');
+                cerrarModalLogro();
+                cargarAlumno();
+            } catch (error) {
+                alert('Error al registrar logro');
+            }
+        }
+
+        function editarExpediente() {
+            if (expedienteData) {
+                document.getElementById('exp_tipoSangre').value = expedienteData.tipo_sangre || '';
+                document.getElementById('exp_alergias').value = expedienteData.alergias || '';
+                document.getElementById('exp_condiciones').value = expedienteData.condiciones_cronicas || '';
+                document.getElementById('exp_emergenciaNombre').value = expedienteData.contacto_emergencia_nombre || '';
+                document.getElementById('exp_emergenciaTelefono').value = expedienteData.contacto_emergencia_telefono || '';
+                document.getElementById('exp_fechaCertificado').value = expedienteData.fecha_certificado_medico || '';
+                document.getElementById('exp_deslinde').checked = expedienteData.deslinde_firmado || false;
+                document.getElementById('exp_reglamento').checked = expedienteData.reglamento_aceptado || false;
+                document.getElementById('exp_imagen').checked = expedienteData.uso_imagen_autorizado || false;
+            }
+            document.getElementById('modalExpediente').style.display = 'flex';
+        }
+
+        async function guardarExpediente() {
+            const data = {
+                tipo_sangre: document.getElementById('exp_tipoSangre').value || null,
+                alergias: document.getElementById('exp_alergias').value || null,
+                condiciones_cronicas: document.getElementById('exp_condiciones').value || null,
+                contacto_emergencia_nombre: document.getElementById('exp_emergenciaNombre').value,
+                contacto_emergencia_telefono: document.getElementById('exp_emergenciaTelefono').value,
+                fecha_certificado_medico: document.getElementById('exp_fechaCertificado').value || null,
+                deslinde_firmado: document.getElementById('exp_deslinde').checked,
+                reglamento_aceptado: document.getElementById('exp_reglamento').checked,
+                uso_imagen_autorizado: document.getElementById('exp_imagen').checked
+            };
+            
+            try {
+                await apiCall(`/alumnos/${alumnoId}/expediente`, 'PUT', data);
+                alert('Expediente actualizado correctamente');
+                cerrarModalExpediente();
+                cargarAlumno();
+            } catch (error) {
+                alert('Error al actualizar expediente');
+            }
+        }
+
+        // Modal handlers
+        function cerrarModal() { document.getElementById('modalEditarAlumno').style.display = 'none'; }
+        function cerrarModalPeso() { document.getElementById('modalPeso').style.display = 'none'; }
+        function cerrarModalGrado() { document.getElementById('modalGrado').style.display = 'none'; }
+        function cerrarModalLogro() { document.getElementById('modalLogro').style.display = 'none'; }
+        function cerrarModalExpediente() { document.getElementById('modalExpediente').style.display = 'none'; }
+
+        document.getElementById('formEditarAlumno').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const data = {
+                nombre: document.getElementById('edit_nombre').value,
+                apellidos: document.getElementById('edit_apellidos').value,
+                telefono_celular: document.getElementById('edit_telefono').value,
+                calle: document.getElementById('edit_calle').value,
+                ciudad: document.getElementById('edit_ciudad').value,
+                altura: parseFloat(document.getElementById('edit_altura').value),
+                peso_actual: parseFloat(document.getElementById('edit_peso').value)
+            };
+            
+            try {
+                await apiCall(`/alumnos/${alumnoId}`, 'PUT', data);
+                alert('Datos actualizados correctamente');
+                cerrarModal();
+                cargarAlumno();
+            } catch (error) {
+                alert('Error al actualizar datos');
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', cargarAlumno);
+        
+        function editarSeccion(seccion) {
+            if (seccion === 'personal') editarAlumno();
+            else if (seccion === 'domicilio') editarAlumno();
+            else if (seccion === 'contacto') editarAlumno();
+        }
+    </script>
+</body>
+</html>
